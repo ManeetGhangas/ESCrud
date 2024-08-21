@@ -1,3 +1,4 @@
+using Elasticsearch.Net;
 using ESCrud.API.Model;
 using ESCrud.API.Service;
 using Nest;
@@ -5,10 +6,14 @@ using Nest;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionSettings = new ConnectionSettings(new Uri("http://localhost:9200"))
-    .DefaultIndex("esdemo");
+//var connectionSettings = new ConnectionSettings(new Uri("http://localhost:9200"))
+//    .DefaultIndex("esdemo");
 
-var elasticsclient = new ElasticClient(connectionSettings);
+var settings = new ConnectionSettings(new Uri("https://10.8.18.105:9200/"))
+        .DefaultIndex("products").ServerCertificateValidationCallback(CertificateValidations.AllowAll)
+        .BasicAuthentication("elastic", "bm5MpO2w6J8lzIaMQoBA");
+
+var elasticsclient = new ElasticClient(settings);
 builder.Services.AddSingleton(elasticsclient);
 //await elasticsearch.CreateIndexIfNotExists("myindex");
 builder.Services.AddScoped< IElasticSearchService<MyDocument>, ElasticSearchService<MyDocument>>();
